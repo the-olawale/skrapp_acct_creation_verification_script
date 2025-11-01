@@ -1,1 +1,1 @@
-***Input your email(s) here***
+***Input your email(s) here: 1 on each line***
