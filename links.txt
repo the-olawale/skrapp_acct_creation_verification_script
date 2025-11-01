@@ -1,1 +1,1 @@
-***Input your email confirmation link here****
+***Input the email confirmation link that will be sent to your email here: 1 on each line****
