@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.edge.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
@@ -43,11 +44,10 @@ def create_skrapp_acct(directory: str):
     Arg:
     directory: A string of the directory containing the emails. 
     '''
-    from selenium.webdriver.chrome.options import Options
-
+    
     options = Options()
     options.add_argument("--incognito")
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Edge(options=options)
     driver.implicitly_wait(10)
 
     # driver.execute_script("window.localStorage.clear(); window.sessionStorage.clear();")
@@ -90,7 +90,6 @@ def setup_passwords(directory: str):
     Arg:
     directory: A string of the directory containing the links. 
     '''
-    from selenium.webdriver.edge.options import Options
 
     links = load_file(directory)
 
@@ -174,6 +173,6 @@ def setup_passwords(directory: str):
 
 if __name__ == "__main__":
 
-    # create_skrapp_acct("email.txt")
+    create_skrapp_acct("email.txt")
 
     # setup_passwords("links.txt")
