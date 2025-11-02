@@ -106,7 +106,7 @@ def setup_passwords(directory: str):
             options.add_argument("--incognito")
             driver.implicitly_wait(10)
 
-            exp_wait = WebDriverWait(driver, timeout=40)
+            exp_wait = WebDriverWait(driver, timeout=30)
 
             password = "starlord76"
 
