@@ -8,8 +8,6 @@ import time
 from typing import List
 
 # options.add_experimental_option(name="detach", value=True)
-# driver = webdriver.Edge(EdgeChromiumDriverManager().install(), options=options)
-# driver = webdriver.Chrome(ChromeDriverManager().install() ,options=options)
 
 r = RandomWord()
 
