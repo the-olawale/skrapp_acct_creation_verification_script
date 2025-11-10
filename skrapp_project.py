@@ -1,9 +1,11 @@
 from selenium import webdriver
-from selenium.webdriver.edge.options import Options
+# from selenium.webdriver.edge.options import Options
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import * 
 from wonderwords import RandomWord
 import time
 from typing import List
@@ -47,7 +49,8 @@ def create_skrapp_acct(directory: str):
     
     options = Options()
     options.add_argument("--incognito")
-    driver = webdriver.Edge(options=options)
+    options.add_argument("--headless")
+    driver = webdriver.Chrome(options=options)
     driver.implicitly_wait(10)
 
     # driver.execute_script("window.localStorage.clear(); window.sessionStorage.clear();")
@@ -63,6 +66,7 @@ def create_skrapp_acct(directory: str):
         driver.find_element(By.ID,value="«R2knarla5ildm»").send_keys(r.word(word_min_length=5, word_max_length=10).capitalize())
         driver.find_element(By.ID,value="«R2l7arla5ildm»").send_keys(email)
         driver.find_element(By.CLASS_NAME,value="css-6afilt").click()
+        print(f"Attempt to create account for email{i} complete")
         
         wait(3)
         try:
@@ -98,9 +102,10 @@ def setup_passwords(directory: str):
     try:
         for i,link in enumerate(links, start=1):
             options = Options()
-            driver = webdriver.Edge(options=options)
-            #driver = webdriver.Chrome(options=options)
             options.add_argument("--incognito")
+            # options.add_argument("--headless")
+            # driver = webdriver.Edge(options=options)
+            driver = webdriver.Chrome(options=options)
             driver.implicitly_wait(10)
 
             exp_wait = WebDriverWait(driver, timeout=30)
@@ -112,7 +117,7 @@ def setup_passwords(directory: str):
 
                 try:
                     driver.find_element(By.ID, "proceed-button").click()
-                except:
+                except NoSuchElementException:
                     pass
                 
                 driver.refresh()
@@ -124,14 +129,13 @@ def setup_passwords(directory: str):
                 print(f"--link {i}:password setup complete--")
 
                 #info popup
-                try:
-                    acct_setup_popup_1 = exp_wait.until(
-                        EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/div[2]/div/div[1]/div/div/div/div[2]/button"))
-                    )
-                    acct_setup_popup_1.click()
-                except:
-                    pass
-
+                # try:
+                #     acct_setup_popup_1 = exp_wait.until(
+                #         EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/div[2]/div/div[1]/div/div/div/div[2]/button"))
+                #     )
+                #     acct_setup_popup_1.click()
+                # except NoSuchElementException:
+                #     pass
 
                 #How did you hear about us popup
                 acct_setup_popup_2 = exp_wait.until(
@@ -151,10 +155,15 @@ def setup_passwords(directory: str):
                 print("--Popup 2 complete--")
 
                 #Welcome popups
-                driver.find_element(By.XPATH, '//*[@id="react-joyride-step-0"]/div/div/div/div[2]/div/div/button').click()
-                driver.find_element(By.XPATH, '//*[@id="react-joyride-step-1"]/div/div/div/div[2]/div/div/button').click()
-                driver.find_element(By.XPATH, '//*[@id="react-joyride-step-2"]/div/div/div[1]/div[2]/div/div/button').click()
-                driver.find_element(By.XPATH, '//*[@id="react-joyride-step-4"]/div/div/div[1]/div[2]/div/div/button').click()
+                welcome_popups = [
+                    '//*[@id="react-joyride-step-0"]/div/div/div/div[2]/div/div/button',
+                    '//*[@id="react-joyride-step-1"]/div/div/div/div[2]/div/div/button',
+                    '//*[@id="react-joyride-step-2"]/div/div/div[1]/div[2]/div/div/button',
+                    '//*[@id="react-joyride-step-4"]/div/div/div[1]/div[2]/div/div/button'
+                ]
+                for elem in welcome_popups:
+                    wait(0.5)
+                    driver.find_element(By.XPATH, elem).click()
                 print(f"--link {i}: Welcome popups complete--")
                 s_logging.write(f"✅ Setup Complete for:\nLink {i}\n\n")
 
