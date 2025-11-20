@@ -1,6 +1,6 @@
 from selenium import webdriver
-# from selenium.webdriver.edge.options import Options
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.edge.options import Options as OptionsE
+from selenium.webdriver.chrome.options import Options as OptionsC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
@@ -8,9 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import * 
 from wonderwords import RandomWord
 import time
-from typing import List
-
-# options.add_experimental_option(name="detach", value=True)
+from typing import Optional
 
 r = RandomWord()
 
@@ -38,22 +36,55 @@ def load_file(file_name: str):
                 content.append(clean)
     return content
 
-def create_skrapp_acct(directory: str):
+def browser_option(browser: str, heading = 0):
+    """Select the webdriver to use.
+    
+    Arg:
+    browser: input the string of the browser you wish to use.
+    "Chrome" for Chrome Webdriver and "Edge" for Edge Webdriver
+    heading: determines if the browser starts in headless mode or not. Default value is NOT headless
+    """
+    #Determines which webdriver to use
+    if browser == "Chrome":
+        options = OptionsC()
+        options.add_argument("--incognito")
+        #Determines if to start in headed or headless mode
+        if heading == True:
+            options.add_argument("--headless")
+        else:
+            pass
+
+        driver = webdriver.Chrome(options=options)
+    elif browser == "Edge":
+        options = OptionsE()
+        options.add_argument("--incognito")
+        #Determines if to start in headed or headless mode
+        if heading == True:
+            options.add_argument("--headless")
+        else:
+            pass
+
+        driver = webdriver.Edge(options=options)
+    else:
+        print("Input either 'Chrome' for Chrome Webdriver and 'Edge'for Edge Webdriver ")
+
+    
+
+    return driver
+
+def create_skrapp_acct(directory: str, browser: str):
     '''
     Create skrapp accounts with the emails from the directory inputed.
     Emails must be stored in a .txt file
 
     Arg:
-    directory: A string of the directory containing the emails. 
+    directory: A string of the directory containing the emails.
+    browser: input the string of the browser you wish to use.
+    "Chrome" for Chrome Webdriver and "Edge" for Edge Webdriver 
     '''
     
-    options = Options()
-    options.add_argument("--incognito")
-    options.add_argument("--headless")
-    driver = webdriver.Chrome(options=options)
+    driver = browser_option(browser, )
     driver.implicitly_wait(10)
-
-    # driver.execute_script("window.localStorage.clear(); window.sessionStorage.clear();")
 
     emails = load_file(directory)
 
@@ -86,13 +117,15 @@ def create_skrapp_acct(directory: str):
             driver.refresh()
     logging.close()
 
-def setup_passwords(directory: str):
+def setup_passwords(directory: str, browser: str):
     '''
     Complete accounts setup by creating password and completing signup questioneer and popups.
     Links must be stored in a .txt file
 
     Arg:
-    directory: A string of the directory containing the links. 
+    directory: A string of the directory containing the links.
+    browser: input the string of the browser you wish to use.
+    "Chrome" for Chrome Webdriver and "Edge" for Edge Webdriver  
     '''
 
     links = load_file(directory)
@@ -101,14 +134,10 @@ def setup_passwords(directory: str):
 
     try:
         for i,link in enumerate(links, start=1):
-            options = Options()
-            options.add_argument("--incognito")
-            # options.add_argument("--headless")
-            # driver = webdriver.Edge(options=options)
-            driver = webdriver.Chrome(options=options)
+            driver = browser_option(browser)
             driver.implicitly_wait(10)
 
-            exp_wait = WebDriverWait(driver, timeout=30)
+            exp_wait = WebDriverWait(driver, timeout=60)
 
             password = "starlord76"
 
@@ -176,12 +205,11 @@ def setup_passwords(directory: str):
             except Exception as e:
                 s_logging.write(f"❌❌Error on link: \n{e!r}\n\n")
     finally:
-        driver.quit()
         s_logging.close()
 
 
 if __name__ == "__main__":
 
-    create_skrapp_acct("email.txt")
+    # create_skrapp_acct("email.txt", "Edge")
 
-    # setup_passwords("links.txt")
+    # setup_passwords("links.txt", "Edge")
